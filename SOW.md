@@ -17,7 +17,7 @@
 ### 核心链路流程
 1. 通过API触发行为事件（支持单条/批量），REST接口由 event-producer-service 提供。
 2. event-producer-service 使用 Protobuf 序列化事件，推送至 Kafka（topic: user-behavior-events），schema自动注册到Schema Registry。
-3. event-consumer-service 基于Confluent Protobuf Kafka反序列化器消费消息，落库或写到ES；消费失败自动重试，持续失败入“user-behavior-events-DLT”主题。
+3. event-consumer-service 基于Confluent Protobuf Kafka反序列化器消费消息，落库或写到ES；消费失败自动重试，持续失败入"user-behavior-events-DLT"主题。
 4. 观测Kafka重平衡、分区漂移、消费顺序、幂等、ConsumerGroup数量等分布式核心特性。
 
 ### 主要Topic与Schema规范
@@ -72,18 +72,46 @@ message UserBehaviorEvent {
 - [ ] 文档完善：开发说明、接口说明、环境使用指引
 - [ ] 项目readme、架构图、常见问题补充
 
+### 新增任务项
 
+- [ ] 核心功能实现
+    - [ ] 实现事件优先级处理机制
+    - [ ] 实现事件去重机制
+    - [ ] 实现事件幂等性保证
+    - [ ] 实现事件顺序性保证
+    - [ ] 实现批量处理机制
+    - [ ] 实现消息压缩策略
+    - [ ] 实现消息大小限制
+    - [ ] 实现消息格式版本控制
 
+- [ ] 开发规范实现
+    - [ ] 创建统一的异常处理机制
+    - [ ] 实现错误码规范
+    - [ ] 规范化代码结构
+    - [ ] 实现日志规范
 
+- [ ] 测试用例开发
+    - [ ] 编写事件序列化/反序列化测试
+    - [ ] 编写消息生产/消费测试
+    - [ ] 编写异常处理测试
+    - [ ] 编写端到端流程测试
+    - [ ] 编写多分区消费测试
+    - [ ] 编写重试机制测试
+    - [ ] 编写死信队列测试
 
-- [ ] 下一步建议
-    - 可以初始化根 pom.xml（多模块Maven工程），各子模块分别独立 `pom.xml`，所有服务依赖公共结构 `event-common`。
-    - 下一步推荐优先：编写 `event-common` 的 protobuf schema 文件配置父pom与模块pom，集成protobuf代码生成插件与 testcontainers 依赖
+- [ ] 示例代码开发
+    - [ ] 实现Producer示例代码
+    - [ ] 实现Consumer示例代码
+    - [ ] 实现测试数据生成器
+    - [ ] 编写API调用示例
 
-
-
-
-
+- [ ] 配置与文档
+    - [ ] 完善Kafka配置说明
+    - [ ] 完善Docker Compose配置
+    - [ ] 编写API文档
+    - [ ] 编写开发指南
+    - [ ] 编写测试方法说明
+    - [ ] 编写常见问题解答
 
 ## 六、架构与实现图示（若后续需要可补充类图/流程图）
 
