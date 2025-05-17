@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package events.activity;
+option java_package = "com.lanlan.mock.events.activity";
+option java_outer_classname = "UserActivityRelationProtos";
+
+import "base.proto";
+
+// 用户关注事件
+message UserFollowEvent {
+  events.base.BaseEvent base = 1;
+  
+  string followed_user_id = 2;    // 被关注用户ID
+  FollowType follow_type = 3;     // 关注类型
+  FollowSource follow_source = 4;  // 关注来源
+  map<string, string> metadata = 5;  // 元数据
+}
+
+// 用户取消关注事件
+message UserUnfollowEvent {
+  events.base.BaseEvent base = 1;
+  
+  string unfollowed_user_id = 2;  // 被取消关注用户ID
+  UnfollowReason reason = 3;      // 取消关注原因
+  int64 follow_duration_seconds = 4;  // 关注时长（秒）
+}
+
+// 用户拉黑事件
+message UserBlockEvent {
+  events.base.BaseEvent base = 1;
+  
+  string blocked_user_id = 2;     // 被拉黑用户ID
+  BlockReason reason = 3;         // 拉黑原因
+  BlockType block_type = 4;       // 拉黑类型
+  bool is_temporary = 5;          // 是否临时拉黑
+  int64 block_duration_seconds = 6;  // 拉黑时长（秒）
+}
+
+// 用户解除拉黑事件
+message UserUnblockEvent {
+  events.base.BaseEvent base = 1;
+  
+  string unblocked_user_id = 2;   // 被解除拉黑用户ID
+  UnblockReason reason = 3;       // 解除拉黑原因
+  int64 block_duration_seconds = 4;  // 拉黑持续时长（秒）
+}
+
+// 关注类型枚举
+enum FollowType {
+  FOLLOW_TYPE_UNSPECIFIED = 0;
+  FOLLOW_TYPE_NORMAL = 1;     // 普通关注
+  FOLLOW_TYPE_SPECIAL = 2;    // 特别关注
+  FOLLOW_TYPE_MUTUAL = 3;     // 互相关注
+}
+
+// 关注来源枚举
+enum FollowSource {
+  FOLLOW_SOURCE_UNSPECIFIED = 0;
+  FOLLOW_SOURCE_PROFILE = 1;      // 个人主页
+  FOLLOW_SOURCE_RECOMMENDATION = 2;  // 推荐
+  FOLLOW_SOURCE_SEARCH = 3;       // 搜索
+  FOLLOW_SOURCE_SHARE = 4;        // 分享
+}
+
+// 取消关注原因枚举
+enum UnfollowReason {
+  UNFOLLOW_REASON_UNSPECIFIED = 0;
+  UNFOLLOW_REASON_USER_INITIATED = 1;  // 用户主动取消
+  UNFOLLOW_REASON_CONTENT_UNINTERESTING = 2;  // 内容不感兴趣
+  UNFOLLOW_REASON_TOO_MANY_POSTS = 3;  // 发帖过多
+  UNFOLLOW_REASON_OTHER = 4;           // 其他原因
+}
+
+// 拉黑原因枚举
+enum BlockReason {
+  BLOCK_REASON_UNSPECIFIED = 0;
+  BLOCK_REASON_HARASSMENT = 1;     // 骚扰
+  BLOCK_REASON_SPAM = 2;           // 垃圾信息
+  BLOCK_REASON_INAPPROPRIATE = 3;  // 不当内容
+  BLOCK_REASON_OTHER = 4;          // 其他原因
+}
+
+// 拉黑类型枚举
+enum BlockType {
+  BLOCK_TYPE_UNSPECIFIED = 0;
+  BLOCK_TYPE_COMPLETE = 1;     // 完全拉黑
+  BLOCK_TYPE_MESSAGE = 2;      // 仅消息拉黑
+  BLOCK_TYPE_COMMENT = 3;      // 仅评论拉黑
+}
+
+// 解除拉黑原因枚举
+enum UnblockReason {
+  UNBLOCK_REASON_UNSPECIFIED = 0;
+  UNBLOCK_REASON_USER_INITIATED = 1;  // 用户主动解除
+  UNBLOCK_REASON_AUTO_EXPIRED = 2;    // 自动过期
+  UNBLOCK_REASON_APPEAL_APPROVED = 3; // 申诉通过
+  UNBLOCK_REASON_OTHER = 4;           // 其他原因
+}

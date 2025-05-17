@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package events.identity;
+option java_package = "com.lanlan.mock.events.identity";
+option java_outer_classname = "UserIdentityRegisteredProtos";
+
+import "base.proto";
+
+// 用户注册事件
+message UserRegisteredEvent {
+  events.base.BaseEvent base = 1;
+  
+  // 注册信息
+  string username = 2;           // 用户名
+  string email = 3;             // 邮箱
+  string phone = 4;             // 手机号
+  string registration_channel = 5;  // 注册渠道
+  string ip_address = 6;        // IP地址
+  string user_agent = 7;        // 用户代理
+  repeated string initial_tags = 8;  // 初始兴趣标签
+}

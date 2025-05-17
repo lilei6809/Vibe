@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package events.recommendation;
+option java_package = "com.lanlan.mock.events.recommendation";
+option java_outer_classname = "UserVibeRecommendationProtos";
+
+import "base.proto";
+
+// 推荐展示事件
+message RecommendationShownEvent {
+  events.base.BaseEvent base = 1;
+  
+  string recommendation_id = 2;           // 推荐ID
+  RecommendationType type = 3;            // 推荐类型
+  repeated string item_ids = 4;           // 推荐项ID列表
+  string position = 5;                    // 展示位置
+  RecommendationSource source = 6;        // 推荐来源
+  map<string, string> params = 7;         // 推荐参数
+  string algorithm_version = 8;           // 算法版本
+  
+  // 预留字段编号
+  reserved 9 to 15;
+  
+  // 新增字段使用新的编号
+  optional int32 display_count = 16;      // 展示次数
+  optional float ctr = 17;                // 点击率
+}
+
+// 推荐点击事件
+message RecommendationClickEvent {
+  events.base.BaseEvent base = 1;
+  
+  string recommendation_id = 2;           // 推荐ID
+  string item_id = 3;                     // 点击项ID
+  RecommendationItemType item_type = 4;   // 点击项类型
+  int32 position = 5;                     // 点击位置
+  int64 dwell_time_ms = 6;                // 停留时间（毫秒）
+  ClickType click_type = 7;               // 点击类型
+  map<string, string> metadata = 8;       // 元数据
+  
+  // 预留字段编号
+  reserved 9 to 15;
+}
+
+// 推荐反馈事件
+message RecommendationFeedbackEvent {
+  events.base.BaseEvent base = 1;
+  
+  string recommendation_id = 2;           // 推荐ID
+  string item_id = 3;                     // 反馈项ID
+  FeedbackType feedback_type = 4;         // 反馈类型
+  string reason = 5;                      // 反馈原因
+  map<string, string> metadata = 6;       // 元数据
+  
+  // 预留字段编号
+  reserved 7 to 15;
+}
+
+// 推荐曝光事件
+message RecommendationImpressionEvent {
+  events.base.BaseEvent base = 1;
+  
+  string recommendation_id = 2;           // 推荐ID
+  repeated string item_ids = 3;           // 曝光项ID列表
+  string position = 4;                    // 曝光位置
+  int64 impression_duration_ms = 5;       // 曝光时长（毫秒）
+  bool is_visible = 6;                    // 是否可见
+  map<string, string> metadata = 7;       // 元数据
+  
+  // 预留字段编号
+  reserved 8 to 15;
+}
+
+// 推荐类型枚举
+enum RecommendationType {
+  RECOMMENDATION_TYPE_UNSPECIFIED = 0;
+  RECOMMENDATION_TYPE_USER = 1;           // 用户推荐
+  RECOMMENDATION_TYPE_CONTENT = 2;        // 内容推荐
+  RECOMMENDATION_TYPE_TOPIC = 3;          // 话题推荐
+  RECOMMENDATION_TYPE_ACTIVITY = 4;       // 活动推荐
+}
+
+// 推荐来源枚举
+enum RecommendationSource {
+  RECOMMENDATION_SOURCE_UNSPECIFIED = 0;
+  RECOMMENDATION_SOURCE_HOME = 1;         // 首页
+  RECOMMENDATION_SOURCE_DISCOVER = 2;     // 发现页
+  RECOMMENDATION_SOURCE_SEARCH = 3;       // 搜索结果
+  RECOMMENDATION_SOURCE_PROFILE = 4;      // 个人主页
+}
+
+// 推荐项类型枚举
+enum RecommendationItemType {
+  RECOMMENDATION_ITEM_TYPE_UNSPECIFIED = 0;
+  RECOMMENDATION_ITEM_TYPE_USER = 1;      // 用户
+  RECOMMENDATION_ITEM_TYPE_POST = 2;      // 帖子
+  RECOMMENDATION_ITEM_TYPE_TOPIC = 3;     // 话题
+  RECOMMENDATION_ITEM_TYPE_ACTIVITY = 4;  // 活动
+}
+
+// 点击类型枚举
+enum ClickType {
+  CLICK_TYPE_UNSPECIFIED = 0;
+  CLICK_TYPE_NORMAL = 1;                  // 普通点击
+  CLICK_TYPE_LONG_PRESS = 2;              // 长按
+  CLICK_TYPE_DOUBLE_CLICK = 3;            // 双击
+  CLICK_TYPE_SWIPE = 4;                   // 滑动
+}
+
+// 反馈类型枚举
+enum FeedbackType {
+  FEEDBACK_TYPE_UNSPECIFIED = 0;
+  FEEDBACK_TYPE_LIKE = 1;                 // 喜欢
+  FEEDBACK_TYPE_DISLIKE = 2;              // 不喜欢
+  FEEDBACK_TYPE_REPORT = 3;               // 举报
+  FEEDBACK_TYPE_HIDE = 4;                 // 隐藏
+}

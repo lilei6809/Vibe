@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package events.activity;
+option java_package = "com.lanlan.mock.events.activity";
+option java_outer_classname = "UserActivitySearchProtos";
+
+import "base.proto";
+
+// 搜索标签事件
+message SearchTagEvent {
+  events.base.BaseEvent base = 1;
+  
+  string search_query = 2;      // 搜索关键词
+  string search_type = 3;       // 搜索类型（热门、最新等）
+  int32 page_number = 4;        // 页码
+  int32 page_size = 5;          // 每页大小
+  repeated string filters = 6;   // 过滤条件
+  map<string, string> search_params = 7;  // 搜索参数
+}
+
+// 搜索用户事件
+message SearchUserEvent {
+  events.base.BaseEvent base = 1;
+  
+  string search_query = 2;      // 搜索关键词
+  string search_type = 3;       // 搜索类型（全部、已关注等）
+  int32 page_number = 4;        // 页码
+  int32 page_size = 5;          // 每页大小
+  repeated string filters = 6;   // 过滤条件
+  map<string, string> search_params = 7;  // 搜索参数
+}
+
+// 探索点击事件
+message ExploreClickedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string explore_id = 2;        // 探索项ID
+  string explore_type = 3;      // 探索类型（话题、活动等）
+  string explore_source = 4;    // 探索来源（首页、发现页等）
+  string explore_position = 5;  // 探索位置
+  map<string, string> explore_metadata = 6;  // 探索元数据
+}
+
+// 搜索历史事件
+message SearchHistoryEvent {
+  events.base.BaseEvent base = 1;
+  
+  string search_query = 2;      // 搜索关键词
+  string search_type = 3;       // 搜索类型
+  int64 search_timestamp = 4;   // 搜索时间戳
+  string search_result_count = 5;  // 搜索结果数量
+  repeated string clicked_results = 6;  // 点击的结果ID列表
+}
