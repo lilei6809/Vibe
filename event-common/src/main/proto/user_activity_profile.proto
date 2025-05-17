@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package events.activity;
+option java_package = "com.lanlan.mock.events.activity";
+option java_outer_classname = "UserActivityProfileProtos";
+
+import "base.proto";
+
+// 更新个人资料事件
+message UpdateProfileEvent {
+  events.base.BaseEvent base = 1;
+  
+  string nickname = 2;          // 昵称
+  string avatar_url = 3;        // 头像URL
+  string bio = 4;              // 个人简介
+  string gender = 5;           // 性别
+  string birthday = 6;         // 生日
+  string location = 7;         // 位置
+  repeated string interests = 8;  // 兴趣标签
+  map<string, string> profile_fields = 9;  // 其他个人资料字段
+  bool is_public = 10;         // 是否公开
+}
+
+// 选择氛围标签事件
+message SelectVibeTagsEvent {
+  events.base.BaseEvent base = 1;
+  
+  repeated string vibe_tags = 2;  // 氛围标签列表
+  string vibe_type = 3;         // 氛围类型
+  int32 vibe_weight = 4;        // 氛围权重
+  map<string, string> vibe_metadata = 5;  // 氛围元数据
+}
+
+// 更新隐私设置事件
+message UpdatePrivacySettingsEvent {
+  events.base.BaseEvent base = 1;
+  
+  map<string, bool> privacy_settings = 2;  // 隐私设置
+  string setting_type = 3;     // 设置类型
+  string setting_value = 4;    // 设置值
+  bool is_global = 5;          // 是否全局设置
+}
+
+// 更新通知设置事件
+message UpdateNotificationSettingsEvent {
+  events.base.BaseEvent base = 1;
+  
+  map<string, bool> notification_settings = 2;  // 通知设置
+  string setting_type = 3;     // 设置类型
+  string setting_value = 4;    // 设置值
+  bool is_global = 5;          // 是否全局设置
+}

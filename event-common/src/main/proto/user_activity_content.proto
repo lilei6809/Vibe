@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package events.activity;
+option java_package = "com.lanlan.mock.events.activity";
+option java_outer_classname = "UserActivityContentProtos";
+
+import "base.proto";
+
+// 发帖事件
+message PostCreatedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string post_id = 2;           // 帖子ID
+  string content = 3;           // 帖子内容
+  repeated string tags = 4;     // 标签
+  string location = 5;          // 位置信息
+  bool is_private = 6;          // 是否私密
+  repeated string media_urls = 7;  // 媒体文件URL
+  string post_type = 8;         // 帖子类型（普通、问答、投票等）
+}
+
+// 评论事件
+message CommentCreatedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string comment_id = 2;        // 评论ID
+  string post_id = 3;           // 帖子ID
+  string content = 4;           // 评论内容
+  string parent_comment_id = 5; // 父评论ID（如果是回复）
+  repeated string mentioned_users = 6;  // @提及的用户
+}
+
+// 回复事件
+message ReplyCreatedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string reply_id = 2;          // 回复ID
+  string comment_id = 3;        // 评论ID
+  string content = 4;           // 回复内容
+  repeated string mentioned_users = 5;  // @提及的用户
+}
+
+// 删除帖子事件
+message DeletePostEvent {
+  events.base.BaseEvent base = 1;
+  
+  string post_id = 2;           // 帖子ID
+  string reason = 3;            // 删除原因
+  bool is_soft_delete = 4;      // 是否软删除
+}

@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package events.base;
+option java_package = "com.lanlan.mock.events.base";
+option java_outer_classname = "BaseEventProtos";
+
+// 基础事件属性
+message BaseEvent {
+  string event_id = 1;          // 事件唯一标识
+  string user_id = 2;           // 用户ID
+  int64 timestamp = 3;          // 事件发生时间戳（Unix时间戳，毫秒）
+  DeviceType device_type = 4;   // 设备类型
+  SourceChannel source_channel = 5;  // 来源渠道
+  map<string, string> extra_data = 6;  // 额外数据（可用于存储其他时间戳，如：created_at, updated_at等）
+}
+
+// 事件类型枚举
+enum EventType {
+  UNKNOWN = 0;
+  
+  // 用户身份事件
+  USER_REGISTERED = 1000;
+  USER_LOGGED_IN = 1001;
+  USER_LOGGED_OUT = 1002;
+  USER_SESSION_EXPIRED = 1003;
+  USER_ACCOUNT_DELETED = 1004;
+  
+  // 内容行为事件
+  POST_CREATED = 2000;
+  COMMENT_CREATED = 2001;
+  REPLY_CREATED = 2002;
+  DELETE_POST = 2003;
+  
+  // 互动行为事件
+  POST_LIKED = 3000;
+  COMMENT_LIKED = 3001;
+  POST_SHARED = 3002;
+  PROFILE_VIEWED = 3003;
+  MESSAGE_SENT = 3004;
+  
+  // 社交关系事件
+  FOLLOW_USER = 4000;
+  UNFOLLOW_USER = 4001;
+  BLOCK_USER = 4002;
+  
+  // 兴趣探索事件
+  SEARCH_TAG = 5000;
+  SEARCH_USER = 5001;
+  EXPLORE_CLICKED = 5002;
+  
+  // 个性设定事件
+  UPDATE_PROFILE = 6000;
+  SELECT_VIBE_TAGS = 6001;
+  
+  // 推荐系统事件
+  RECOMMENDATION_SHOWN = 7000;
+  RECOMMENDATION_CLICKED = 7001;
+}
+
+// 设备类型枚举
+enum DeviceType {
+  DEVICE_TYPE_UNSPECIFIED = 0;
+  DEVICE_TYPE_MOBILE = 1;      // 移动设备
+  DEVICE_TYPE_WEB = 2;         // 网页
+  DEVICE_TYPE_DESKTOP = 3;     // 桌面应用
+  DEVICE_TYPE_TABLET = 4;      // 平板
+  DEVICE_TYPE_TV = 5;          // 电视
+  DEVICE_TYPE_WEARABLE = 6;    // 可穿戴设备
+}
+
+// 来源渠道枚举
+enum SourceChannel {
+  SOURCE_CHANNEL_UNSPECIFIED = 0;
+  SOURCE_CHANNEL_APP = 1;          // 原生应用
+  SOURCE_CHANNEL_BROWSER = 2;      // 浏览器
+  SOURCE_CHANNEL_MINI_PROGRAM = 3; // 小程序
+  SOURCE_CHANNEL_H5 = 4;           // H5页面
+  SOURCE_CHANNEL_API = 5;          // API调用
+  SOURCE_CHANNEL_BACKGROUND = 6;   // 后台任务
+} 

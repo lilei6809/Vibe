@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package events.activity;
+option java_package = "com.lanlan.mock.events.activity";
+option java_outer_classname = "UserActivityInteractionProtos";
+
+import "base.proto";
+
+// 点赞事件
+message PostLikedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string post_id = 2;           // 帖子ID
+  string like_type = 3;         // 点赞类型（普通、超级赞等）
+  int32 like_count = 4;         // 点赞数量（用于批量点赞）
+}
+
+// 评论点赞事件
+message CommentLikedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string comment_id = 2;        // 评论ID
+  string post_id = 3;           // 帖子ID
+  string like_type = 4;         // 点赞类型
+}
+
+// 分享事件
+message PostSharedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string post_id = 2;           // 帖子ID
+  string share_platform = 3;    // 分享平台
+  string share_type = 4;        // 分享类型（链接、图片等）
+  string share_content = 5;     // 分享内容
+}
+
+// 查看个人主页事件
+message ProfileViewedEvent {
+  events.base.BaseEvent base = 1;
+  
+  string target_user_id = 2;    // 被查看用户ID
+  string view_source = 3;       // 查看来源
+  int32 view_duration = 4;      // 查看时长（秒）
+  repeated string viewed_sections = 5;  // 查看的板块
+}
+
+// 发送私信事件
+message MessageSentEvent {
+  events.base.BaseEvent base = 1;
+  
+  string target_user_id = 2;    // 接收用户ID
+  string message_id = 3;        // 消息ID
+  string message_type = 4;      // 消息类型（文本、图片等）
+  string content = 5;           // 消息内容
+  repeated string media_urls = 6;  // 媒体文件URL
+  bool is_group_message = 7;    // 是否群消息
+}
