@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,34 +14,75 @@
         <module>event-consumer-service</module>
     </modules>
 
-    <!-- 统一依赖版本管理 -->
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spring-boot.version>3.2.5</spring-boot.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
+        <confluent.platform.version>7.4.1</confluent.platform.version>
+        <kafka.clients.version>3.4.1</kafka.clients.version>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+        <slf4j.version>2.0.12</slf4j.version>
+
+        <!-- Protobuf versions -->
+        <protobuf.version>3.25.3</protobuf.version> <!-- Used for protobuf-java and protoc -->
+        <!-- ascopes.protobuf-maven-plugin version -->
+        <ascopes.protobuf-maven-plugin.version>3.2.0</ascopes.protobuf-maven-plugin.version> <!-- Check for the latest version -->
+        <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
+        <!-- os-maven-plugin.version is no longer needed -->
+    </properties>
+
     <dependencyManagement>
+        <!-- ... (rest of your dependencyManagement remains the same) ... -->
         <dependencies>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.2.5</version>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.19.8</version>
+                <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-protobuf-serializer</artifactId>
+                <version>${confluent.platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.clients.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Protobuf Dependencies -->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-    
-    <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <spring-boot.version>3.2.5</spring-boot.version>
-        <protobuf.version>0.6.1</protobuf.version>
-    </properties>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -50,7 +91,96 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- REMOVE os-maven-plugin from pluginManagement -->
+
+                <!-- Protobuf Maven Plugin (using io.github.ascopes) -->
+                <plugin>
+                    <groupId>io.github.ascopes</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>${ascopes.protobuf-maven-plugin.version}</version>
+                    <configuration>
+                        <!-- The plugin will download protoc matching this version -->
+                        <protocVersion>${protobuf.version}</protocVersion>
+                        <!-- <sourceProtoLookupPath>${project.basedir}/src/main/proto</sourceProtoLookupPath> -->
+                        <sourceDirectories>
+                            <sourceDirectory>${project.basedir}/src/main/proto</sourceDirectory>
+                        </sourceDirectories>
+                        <javaOutputDirectory>${project.build.directory}/generated-sources/protobuf/java</javaOutputDirectory>
+                        <!-- For test protos if you have them in src/test/proto -->
+                        <!-- <testSourceProtoLookupPath>${project.basedir}/src/test/proto</testSourceProtoLookupPath> -->
+                        <testSourceDirectories>
+                            <testSourceDirectory>${project.basedir}/src/test/proto</testSourceDirectory>
+                        </testSourceDirectories>
+                        <javaTestOutputDirectory>${project.build.directory}/generated-test-sources/protobuf/java</javaTestOutputDirectory>
+                        <!-- Add other configurations as needed, e.g., for plugins like protoc-gen-grpc-java -->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>       <!-- Generates main sources -->
+                                <goal>generate-test</goal>  <!-- Generates test sources -->
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Build Helper Maven Plugin to add generated sources (still needed) -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>add-protobuf-sources</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${project.build.directory}/generated-sources/protobuf/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>add-protobuf-test-sources</id>
+                            <phase>generate-test-sources</phase>
+                            <goals>
+                                <goal>add-test-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${project.build.directory}/generated-test-sources/protobuf/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

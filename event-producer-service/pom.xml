@@ -8,11 +8,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-producer-service</artifactId>
+
+    <!-- Properties like java.version are inherited from parent -->
+
     <dependencies>
         <dependency>
             <groupId>com.lanlan.mock</groupId>
             <artifactId>event-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version> <!-- Use project.version for inter-module snapshot deps -->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -31,18 +34,56 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-protobuf-serializer</artifactId>
-            <version>7.4.1</version>
+            <!-- Version is managed by parent POM -->
         </dependency>
-        <!-- 测试工具 -->
+
+        <!-- TEST DEPENDENCIES -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions> <!-- Optional: Exclude default junit vintage if only using Jupiter -->
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!-- Testcontainers for Kafka & Schema Registry -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId> <!-- For JUnit 5 integration -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId> <!-- Core, for GenericContainer -->
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Kafka Clients for test interactions -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <scope>test</scope> <!-- Or compile if your main code also uses it directly -->
+        </dependency>
+
+        <!-- Logging implementation for tests -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId> <!-- Or logback-classic from spring-boot-starter -->
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <!--
+        No need for <repositories> here if it's in the root POM,
+        unless this module needs a specific repository not defined in the parent.
+    -->
 </project>
